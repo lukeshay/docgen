@@ -4,7 +4,7 @@ on:
   push:
     workflow_dispatch:
     tags:
-      - "*"
+      - "v*"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -35,4 +35,4 @@ jobs:
           version: latest
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.SST_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DOCGEN_GITHUB_TOKEN }}
