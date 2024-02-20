@@ -1,0 +1,161 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content="custom" />
+    <title>{{.Title}}</title>
+    <meta name="description" content="{{.Description}}" />
+
+    <meta name="twitter:card" content="summary" />
+    {{if ne .Twitter ""}}
+    <meta name="twitter:site" content="{{.Twitter}}" />
+    {{end}}
+    <meta name="twitter:title" content="{{.Title}}" />
+    <meta name="twitter:description" content="{{.Description}}" />
+    <!-- <meta property="og:image" content="" /> -->
+
+    <meta property="og:site_name" content="{{.Name}}" />
+    <meta property="og:title" content="{{.Title}}" />
+    <meta property="og:url" content="{{.Url}}" />
+    <meta property="og:description" content="{{.Description}}" />
+
+    <link rel="stylesheet" href="/globals.css" />
+  </head>
+  <body>
+    <div class="block fixed top-0 w-full md:hidden">
+      <div class="">
+        <header
+          class="flex justify-between p-2 bg-white bg-opacity-70 backdrop-blur-md border-b"
+        >
+          <a href="/" class="text-xl font-bold">{{.Name}}</a>
+          <button
+            id="toggle-mobile-menu-button"
+            class=""
+            aria-label="Toggle menu"
+          >
+            <svg
+              class="h-6 w-6 text-black/80"
+              id="toggle-mobile-menu-button-open-icon"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="#2c2c2c"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              ></path>
+            </svg>
+            <svg
+              class="hidden h-6 w-6 text-black/80"
+              id="toggle-mobile-menu-button-close-icon"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="#2c2c2c"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              ></path>
+            </svg>
+          </button>
+        </header>
+        <nav
+          class="hidden bg-white border-b shadow-md px-4 py-8 -mt-2 space-y-6"
+          id="mobile-menu-nav"
+        >
+          {{range $section := .NavSections}}
+          <section class="space-y-1.5">
+            <h2 class="font-bold">{{$section.Title}}</h2>
+            <ul class="space-y-1">
+              {{range $page := $section.Pages}}
+              <li class="">
+                {{if eq $.Path $page.Href}}
+                <a
+                  href="{{$page.Href}}"
+                  class="text-blue-700 hover:underline underline-offset-2 transition-all ease-in-out duration-300"
+                  >{{$page.Title}}</a
+                >
+                {{else}}
+                <a
+                  href="{{$page.Href}}"
+                  class="text-black/70 hover:underline underline-offset-2 transition-all ease-in-out duration-300"
+                  >{{$page.Title}}</a
+                >
+                {{end}}
+              </li>
+              {{end}}
+            </ul>
+          </section>
+          {{end}}
+        </nav>
+      </div>
+    </div>
+    <div class="flex w-full pt-8 md:pt-0">
+      <div class="flex max-w-6xl w-full mx-auto py-8 px-4 md:px-8">
+        <aside class="min-w-52 space-y-8 hidden md:block">
+          <a href="/" class="font-bold text-2xl h-24">{{.Name}}</a>
+          <nav class="space-y-6">
+            {{range $section := .NavSections}}
+            <section class="space-y-1.5">
+              <h2 class="font-bold">{{$section.Title}}</h2>
+              <ul class="space-y-1">
+                {{range $page := $section.Pages}}
+                <li class="">
+                  {{if eq $.Path $page.Href}}
+                  <a
+                    href="{{$page.Href}}"
+                    class="text-blue-700 hover:underline underline-offset-2 transition-all ease-in-out duration-300"
+                    >{{$page.Title}}</a
+                  >
+                  {{else}}
+                  <a
+                    href="{{$page.Href}}"
+                    class="text-black/70 hover:underline underline-offset-2 transition-all ease-in-out duration-300"
+                    >{{$page.Title}}</a
+                  >
+                  {{end}}
+                </li>
+                {{end}}
+              </ul>
+            </section>
+            {{end}}
+          </nav>
+        </aside>
+        <main class="prose w-full max-w-none">{{.Markdown}}</main>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  document
+    .getElementById("toggle-mobile-menu-button")
+    .addEventListener("click", (e) => {
+      const mobileMenuNav = document.getElementById("mobile-menu-nav");
+      if (mobileMenuNav.classList.contains("hidden")) {
+        mobileMenuNav.classList.remove("hidden");
+        document
+          .getElementById("toggle-mobile-menu-button-close-icon")
+          .classList.remove("hidden");
+        document
+          .getElementById("toggle-mobile-menu-button-open-icon")
+          .classList.add("hidden");
+      } else {
+        mobileMenuNav.classList.add("hidden");
+        document
+          .getElementById("toggle-mobile-menu-button-close-icon")
+          .classList.add("hidden");
+        document
+          .getElementById("toggle-mobile-menu-button-open-icon")
+          .classList.remove("hidden");
+      }
+    });
+</script>

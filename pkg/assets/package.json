@@ -1,0 +1,13 @@
+{
+  "name": "assets",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tailwindcss -i css/globals.css -o assets/globals.css",
+    "watch": "bun run build --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss": "^3.4.1"
+  }
+}

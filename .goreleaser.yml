@@ -2,6 +2,8 @@ project_name: docgen
 before:
   hooks:
     - go mod tidy
+    - cd pkg/assets && bun install
+    - bun --cwd pkg/assets run build
 builds:
   - env:
       - CGO_ENABLED=0
@@ -35,6 +37,9 @@ brews:
   - repository:
       owner: lukeshay
       name: homebrew-tap
+    homepage: "https://github.com/lukeshay/docgen"
+    description: the docgen cli
+    license: Apache-2.0
 #fpms:
 # - maintainer: lukeshay
 #   description: the docgen cli

@@ -1,0 +1,16 @@
+{
+  "name": "docgen",
+  "description": "A new docgen site",
+  "domain": "",
+  "social": {
+    "twitter": "",
+    "facebook": "",
+    "instagram": "",
+    "linkedin": "",
+    "github": "",
+    "gitlab": "",
+    "bitbucket": ""
+  },
+  "src": "docs",
+  "out": "docs-gen"
+}

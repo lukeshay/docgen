@@ -1,2 +1,5 @@
-dist/
 .env*
+dist/
+docs-gen/
+.DS_Store
+*.log*
