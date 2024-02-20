@@ -1,12 +1,15 @@
-module github.com/lukeshay/docgen
+module github.com/lukeshay/gocden
 
 go 1.21.6
 
 require (
 	github.com/adrg/frontmatter v0.2.0
+	github.com/alecthomas/chroma v0.10.0
 	github.com/briandowns/spinner v1.23.0
+	github.com/fsnotify/fsnotify v1.7.0
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/otiai10/copy v1.14.0
+	github.com/pelletier/go-toml/v2 v2.1.1
 	github.com/urfave/cli/v2 v2.27.1
 	github.com/yuin/goldmark v1.7.0
 )
@@ -14,6 +17,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
+	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

@@ -2,13 +2,62 @@ package assets
 
 import (
 	"embed"
+	"fmt"
+	"html/template"
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 //go:embed templates/* assets/*
 var Assets embed.FS
+
+var pageTmpl *template.Template
+
+type NavPage struct {
+	Title string
+	Href  string
+}
+
+type NavSection struct {
+	Title string
+	Pages []NavPage
+}
+
+type PageTemplateData struct {
+	Markdown    template.HTML
+	Name        string
+	Title       string
+	Description string
+	Url         string
+	Twitter     string
+	Path        string
+	NavSections []*NavSection
+	UpdatedAt   time.Time
+	Prev        NavPage
+	Next        NavPage
+}
+
+func (page *PageTemplateData) FormattedUpdatedAt() string {
+	return page.UpdatedAt.Format("Tuesday, 2 January 2006")
+}
+
+func (page *PageTemplateData) Execute(file *os.File) error {
+	pageTemplateContent, err := ReadTemplate("page.html")
+	if err != nil {
+		return fmt.Errorf("Could not read template: %s", err.Error())
+	}
+
+	if pageTmpl == nil {
+		pageTmpl, err = template.New("page").Parse(string(pageTemplateContent))
+		if err != nil {
+			return fmt.Errorf("Could not parse template: %s", err.Error())
+		}
+	}
+
+	return pageTmpl.Execute(file, page)
+}
 
 func CopyTo(srcDir, destDir string) error {
 	// Create the destination directory if it doesn't exist

@@ -1,6 +1,6 @@
 ---
 title: Configuration
-section: Getting Started
+section: Basics
 ---
 
 # Configuration

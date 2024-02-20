@@ -1,8 +1,7 @@
-project_name: docgen
+project_name: gocden
 before:
   hooks:
     - go mod tidy
-    - cd pkg/assets && bun install
     - bun --cwd pkg/assets run build
 builds:
   - env:
@@ -11,13 +10,13 @@ builds:
       - linux
       - windows
       - darwin
-    main: ./cmd/docgen
+    main: ./cmd/gocden
 
 archives:
   - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of uname.
     name_template: >-
-      docgen-
+      gocden-
       {{- if eq .Os "darwin" }}mac-
       {{- else if eq .Os "windows" }}windows-
       {{- else if eq .Os "linux" }}linux-{{end}}
@@ -37,12 +36,12 @@ brews:
   - repository:
       owner: lukeshay
       name: homebrew-tap
-    homepage: "https://github.com/lukeshay/docgen"
-    description: the docgen cli
+    homepage: "https://github.com/lukeshay/gocden"
+    description: the gocden cli
     license: Apache-2.0
 #fpms:
 # - maintainer: lukeshay
-#   description: the docgen cli
+#   description: the gocden cli
 #   formats:
 #     - deb
 #     - rpm
@@ -54,8 +53,8 @@ brews:
 #  bucket:
 #    owner: lukeshay
 #   name: scoop-bucket
-# homepage: "https://github.com/lukeshay/docgen"
-# description: "docgen cli"
+# homepage: "https://github.com/lukeshay/gocden"
+# description: "gocden cli"
 # license: Apache 2.0
 
 changelog:

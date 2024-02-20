@@ -29,10 +29,12 @@ jobs:
           go-version: ">=1.22.0"
       - name: Go Mod
         run: go mod download
+      - name: Install node_modules
+        run: cd pkg/assets && bun install
       - uses: goreleaser/goreleaser-action@v4
         with:
           distribution: goreleaser
           version: latest
           args: release --clean --snapshot
       - name: Build docs
-        run: ./dist/docgen_linux_amd64_v1 --verbose build
+        run: ./dist/gocden_linux_amd64_v1 --verbose build

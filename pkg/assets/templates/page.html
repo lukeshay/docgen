@@ -99,8 +99,10 @@
       </div>
     </div>
     <div class="flex w-full pt-8 md:pt-0">
-      <div class="flex max-w-6xl w-full mx-auto py-8 px-4 md:px-8">
-        <aside class="min-w-52 space-y-8 hidden md:block">
+      <div class="max-w-6xl w-full mx-auto px-4 md:grid grid-cols-5">
+        <aside
+          class="space-y-8 hidden md:block pr-4 py-8 border-r h-screen self-start sticky top-0 col-span-1 overflow-y-auto flex-1 pl-2 overflow-y-auto no-scrollbar"
+        >
           <a href="/" class="font-bold text-2xl h-24">{{.Name}}</a>
           <nav class="space-y-6">
             {{range $section := .NavSections}}
@@ -129,7 +131,59 @@
             {{end}}
           </nav>
         </aside>
-        <main class="prose w-full max-w-none">{{.Markdown}}</main>
+        <div
+          class="w-full pl-0 md:pl-12 col-start-2 col-span-full pt-8 h-screen overflow-y-auto flex-1 pr-0 md:pr-6 mr-0 md:-mr-6 space-y-8 pb-32"
+        >
+          <main class="prose w-full max-w-none prose-pre:my-0">
+            {{.Markdown}}
+          </main>
+          <div class="flex justify-between items-center">
+            <a
+              href="{{.Prev.Href}}"
+              class="font-bold hover:underline flex space-x-1 items-center p-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+              <span>{{.Prev.Title}}</span>
+            </a>
+            <p class="text-sm italic">
+              This page was last modified
+              <span class="font-medium">{{.FormattedUpdatedAt}}</span>
+            </p>
+            <a
+              href="{{.Next.Href}}"
+              class="font-bold hover:underline flex space-x-1 items-center p-1"
+            >
+              <span>{{.Next.Title}}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </body>

@@ -1,0 +1,23 @@
+name = 'gocden'
+description = 'Documentation for gocden'
+url = 'https://lukeshay.github.io/gocden'
+
+[social]
+twitter = ''
+facebook = ''
+instagram = ''
+linkedin = ''
+github = ''
+gitlab = ''
+bitbucket = ''
+
+[build]
+src = 'docs'
+out = 'docs-gen'
+assets = ''
+
+[options]
+ordering = true
+
+[serve]
+port = 7153
