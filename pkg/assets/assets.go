@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-//go:embed templates/* assets/*
+//go:embed templates assets
 var Assets embed.FS
 
 var pageTmpl *template.Template
