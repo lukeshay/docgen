@@ -49,9 +49,10 @@ jobs:
       - name: Build docs
         run: ./dist/gocden_linux_amd64_v1/gocden --verbose build
       - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: "./docs-gen"
+          path: _site
+          name: github-pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

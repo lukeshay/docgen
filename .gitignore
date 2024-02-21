@@ -1,5 +1,5 @@
 .env*
 dist/
-docs-gen/
+_site/
 .DS_Store
 *.log*

@@ -13,7 +13,7 @@ bitbucket = ''
 
 [build]
 src = 'docs'
-out = 'docs-gen'
+out = '_site'
 assets = ''
 
 [options]
