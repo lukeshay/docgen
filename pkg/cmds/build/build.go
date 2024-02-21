@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log/slog"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -186,6 +187,13 @@ func BuildFile(idx int, files []DocFile, conf *config.Config, navSections []*ass
 		next = files[idx+1]
 	}
 
+	basePath := ""
+
+	url, err := url.Parse(conf.Url)
+	if err == nil {
+		basePath = url.Path
+	}
+
 	slog.Info("Writing HTML file", "source", file.InPath, "destinition", file.OutPath)
 
 	page := &assets.PageTemplateData{
@@ -206,6 +214,7 @@ func BuildFile(idx int, files []DocFile, conf *config.Config, navSections []*ass
 			Title: next.Matter.Title,
 			Href:  next.Path,
 		},
+		BasePath: basePath,
 	}
 
 	if err := page.Execute(dstHtmlFile); err != nil {

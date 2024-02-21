@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -37,6 +38,7 @@ type PageTemplateData struct {
 	UpdatedAt   time.Time
 	Prev        NavPage
 	Next        NavPage
+	BasePath    string
 }
 
 func (page *PageTemplateData) FormattedUpdatedAt() string {
@@ -57,6 +59,15 @@ func (page *PageTemplateData) Execute(file *os.File) error {
 	}
 
 	return pageTmpl.Execute(file, page)
+}
+
+func (page *PageTemplateData) JoinPath(path string) string {
+	str, err := url.JoinPath(page.BasePath, path)
+	if err != nil {
+		panic(err)
+	}
+
+	return str
 }
 
 func CopyTo(srcDir, destDir string) error {
