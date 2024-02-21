@@ -2,7 +2,7 @@ project_name: gocden
 before:
   hooks:
     - go mod tidy
-    - cd ./pkg/assets && bun install && bun run build
+    - bun --cwd pkg/assets run build
 builds:
   - env:
       - CGO_ENABLED=0
