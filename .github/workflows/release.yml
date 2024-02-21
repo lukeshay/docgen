@@ -1,22 +1,24 @@
 name: release
 
 on:
+  workflow_dispatch:
   push:
-    workflow_dispatch:
     tags:
       - "v*"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-
 jobs:
   goreleaser:
     runs-on: ubuntu-22.04
-    environment: Release
+    environment:
+      name: Release
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      pages: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -52,6 +54,4 @@ jobs:
           path: "./docs-gen"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.DOCGEN_GITHUB_TOKEN }}
+        uses: actions/deploy-pages@v4
