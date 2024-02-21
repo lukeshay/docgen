@@ -28,8 +28,6 @@ jobs:
           go-version: ">=1.22.0"
       - name: Go Mod
         run: go mod download
-      - name: Install node_modules
-        run: cd pkg/assets && bun install
       - uses: goreleaser/goreleaser-action@v4
         with:
           distribution: goreleaser
