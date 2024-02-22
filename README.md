@@ -1,3 +1,5 @@
 # gocden
 
-A simple markdown documentation generator written in Go.
+[![release](https://github.com/lukeshay/gocden/actions/workflows/release.yml/badge.svg)](https://github.com/lukeshay/gocden/actions/workflows/release.yml) [![CodeQL](https://github.com/lukeshay/gocden/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/lukeshay/gocden/actions/workflows/github-code-scanning/codeql)
+
+A simple markdown documentation generator written in Go. Read the [documentation](https://lukeshay.github.io/gocden) for more information.

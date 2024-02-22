@@ -77,7 +77,7 @@ func RunServer(c *cli.Context) error {
 		http.ServeFile(w, r, filepath.Join(cwd, config.Build.Output, filePath))
 	})
 
-	fmt.Printf("Listening on http://localhost:%d%s...\n", config.Serve.Port, basePath)
+	fmt.Printf("Listening on http://localhost:%d%s ...\n", config.Serve.Port, basePath)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", config.Serve.Port), handler)
 	if err != nil {

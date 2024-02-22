@@ -2,26 +2,26 @@ package dev
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"path/filepath"
-	"sync"
 	"syscall"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/lukeshay/gocden/pkg/cmds"
 	"github.com/lukeshay/gocden/pkg/cmds/build"
 	"github.com/lukeshay/gocden/pkg/cmds/serve"
+	"github.com/lukeshay/gocden/pkg/util"
 	"github.com/urfave/cli/v2"
 )
-
-var mu = sync.Mutex{}
 
 func Dev(c *cli.Context) error {
 	cwd := cmds.GetCwdFlag(c)
 	config := cmds.GetConfigFromCliContext(c)
-	files, navSections, err := build.BuildAllFiles(c)
-	if err != nil {
+
+	if _, _, err := build.BuildAllFiles(c); err != nil {
 		return err
 	}
 
@@ -49,6 +49,8 @@ func Dev(c *cli.Context) error {
 		os.Exit(1)
 	}()
 
+	debounce := util.NewDebouncer(250 * time.Millisecond)
+
 	// Start listening for events.
 	go func() {
 		for {
@@ -57,38 +59,21 @@ func Dev(c *cli.Context) error {
 				if !ok {
 					return
 				}
-				fmt.Printf("event: %v\n", event)
+				slog.Info("File system even detected", "even", event)
 
-				mu.Lock()
-				if event.Has(fsnotify.Create) {
-					if newFiles, newNavSections, err := build.BuildAllFiles(c); err != nil {
-						fmt.Printf("Error building: %v\n", err)
-					} else {
-						files = newFiles
-						navSections = newNavSections
-					}
-				} else if event.Has(fsnotify.Write) {
-					idx := -1
-
-					for i, file := range *files {
-						if file.InPath == event.Name {
-							idx = i
-							break
-						}
-					}
-					if idx != -1 {
-						if err := build.BuildFile(idx, *files, config, *navSections); err != nil {
+				if event.Has(fsnotify.Create) || event.Has(fsnotify.Remove) || event.Has(fsnotify.Write) {
+					debounce(func() {
+						if _, _, err := build.BuildAllFiles(c); err != nil {
 							fmt.Printf("Error building: %v\n", err)
 						}
-					}
-
+					})
 				}
-				mu.Unlock()
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				fmt.Printf("error: %v\n", err)
+
+				fmt.Printf("Error while watching file system: %v\n", err)
 			}
 		}
 	}()

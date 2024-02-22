@@ -14,7 +14,6 @@ bitbucket = ''
 [build]
 src = 'docs'
 out = '_site'
-assets = ''
 
 [options]
 ordering = true

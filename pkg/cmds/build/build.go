@@ -10,8 +10,10 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	cp "github.com/otiai10/copy"
 
 	"github.com/adrg/frontmatter"
@@ -61,9 +63,14 @@ func Build(c *cli.Context) error {
 
 	spin.Stop()
 
+	if err != nil {
+		fmt.Printf("Error building docs: %s\n", err.Error())
+		return err
+	}
+
 	fmt.Println("Docs built successfully")
 
-	return err
+	return nil
 }
 
 func BuildAllFiles(c *cli.Context) (*[]DocFile, *[]*assets.NavSection, error) {
@@ -76,15 +83,8 @@ func BuildAllFiles(c *cli.Context) (*[]DocFile, *[]*assets.NavSection, error) {
 	os.RemoveAll(outDir)
 	os.MkdirAll(outDir, os.ModePerm)
 
-	if err := cp.Copy(filepath.Join(srcDir, "assets"), filepath.Join(outDir, "assets")); err != nil {
-		fmt.Println("Could not copy assets", err.Error())
-
-		return nil, nil, err
-	}
-
 	if err := assets.CopyTo("assets", outDir); err != nil {
-		fmt.Println("Could not copy assets")
-		return nil, nil, err
+		return nil, nil, multierror.Prefix(err, "Could not copy gocden assets")
 	}
 
 	files := []DocFile{}
@@ -98,8 +98,14 @@ func BuildAllFiles(c *cli.Context) (*[]DocFile, *[]*assets.NavSection, error) {
 	if err := filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
 		slog.Info("Processing file in src directory", "src", srcDir, "path", path)
 
-		if err != nil || info.IsDir() || !mdRegExp.MatchString(info.Name()) {
-			return err
+		if err != nil || info.IsDir() {
+			return nil
+		}
+
+		if !mdRegExp.MatchString(info.Name()) {
+			if err := cp.Copy(path, strings.Replace(path, srcDir, outDir, 1)); err != nil {
+				return fmt.Errorf("Error copying file %s: %v", info.Name(), err)
+			}
 		}
 
 		file, err := CreateDocFile(conf, srcDir, outDir, path, info)
@@ -143,33 +149,40 @@ func BuildAllFiles(c *cli.Context) (*[]DocFile, *[]*assets.NavSection, error) {
 
 		return nil
 	}); err != nil {
-		fmt.Println("Could not walk src directory", err.Error())
+		return nil, nil, multierror.Prefix(err, "Could not walk src directory")
 	}
 
 	slog.Info("Writing html files", "sections", navSections)
 
+	var wg sync.WaitGroup
+	var result *multierror.Error
+
+	wg.Add(len(files))
+
 	for idx, file := range files {
-		defer file.File.Close()
+		go func(idx int, file DocFile) {
+			defer wg.Done()
+			defer file.File.Close()
 
-		err := BuildFile(idx, files, conf, navSections)
-		if err != nil {
-			return nil, nil, err
-		}
-
+			if err := BuildFile(files, conf, navSections, idx, file); err != nil {
+				result = multierror.Append(result, err)
+			}
+		}(idx, file)
 	}
 
-	return &files, &navSections, nil
+	wg.Wait()
+
+	return &files, &navSections, result.ErrorOrNil()
 }
 
-func BuildFile(idx int, files []DocFile, conf *config.Config, navSections []*assets.NavSection) error {
-	file := files[idx]
-	_ = os.MkdirAll(filepath.Dir(file.OutPath), os.ModePerm)
+func BuildFile(files []DocFile, conf *config.Config, navSections []*assets.NavSection, idx int, file DocFile) error {
+	if info, err := os.Stat(filepath.Dir(file.OutPath)); err != nil || !info.IsDir() {
+		_ = os.MkdirAll(filepath.Dir(file.OutPath), os.ModePerm)
+	}
 
 	dstHtmlFile, err := os.Create(file.OutPath)
 	if err != nil {
-		fmt.Println("Could not create file", file.OutPath, err.Error())
-
-		return err
+		return fmt.Errorf("Could not create file %s: %v", file.OutPath, err.Error())
 	}
 	defer dstHtmlFile.Close()
 
@@ -218,8 +231,7 @@ func BuildFile(idx int, files []DocFile, conf *config.Config, navSections []*ass
 	}
 
 	if err := page.Execute(dstHtmlFile); err != nil {
-		fmt.Println("Could not execute template", err.Error())
-		return err
+		return fmt.Errorf("Could not execute template: %v", err.Error())
 	}
 
 	return nil
@@ -236,16 +248,14 @@ func CreateDocFile(conf *config.Config, srcDir string, outDir string, path strin
 
 	markdownFile, err := os.Open(path)
 	if err != nil {
-		fmt.Println("Could not open file", err.Error())
-		return nil, err
+		return nil, fmt.Errorf("Could not open file: %v", err)
 	}
 
 	var matter DocMatter
 
 	pageMarkdown, err := frontmatter.MustParse(markdownFile, &matter)
 	if err != nil {
-		fmt.Println("Could not parse frontmatter")
-		return nil, err
+		return nil, fmt.Errorf("Could not parse frontmatter: %v", err)
 	}
 
 	if err := validation.ValidateAndPrint(fmt.Sprintf("The frontmatter is invalid in %s", info.Name()), &matter); err != nil {
@@ -255,8 +265,7 @@ func CreateDocFile(conf *config.Config, srcDir string, outDir string, path strin
 	var markdownHtmlBuf bytes.Buffer
 
 	if err := md.Convert(pageMarkdown, &markdownHtmlBuf, parser.WithContext(parser.NewContext())); err != nil {
-		fmt.Println("Could not convert markdown to html")
-		return nil, err
+		return nil, fmt.Errorf("Could not convert markdown to html: %v", err)
 	}
 
 	markdownHtml := markdownHtmlBuf.String()

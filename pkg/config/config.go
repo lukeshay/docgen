@@ -24,7 +24,6 @@ type Social struct {
 type Build struct {
 	Source string `toml:"src" validate:"required"`
 	Output string `toml:"out" validate:"required"`
-	Assets string `toml:"assets"`
 }
 
 type Options struct {

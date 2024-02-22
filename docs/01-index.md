@@ -11,6 +11,5 @@ A simple markdown documentation generator written in Go. Get started by reading 
 | Feature           | Status  |
 | ----------------- | ------- |
 | Social links      | Planned |
-| Watch command     | Planned |
 | Table of Contents | Planned |
 | Custom CSS        | Planned |
