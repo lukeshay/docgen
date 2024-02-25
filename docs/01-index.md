@@ -1,8 +1,8 @@
 ---
-title: Docgen
+title: Gocden
 ---
 
-# Docgen
+# Gocden
 
 A simple markdown documentation generator written in Go. Get started by reading the [Basics](/basics/getting-started).
 
