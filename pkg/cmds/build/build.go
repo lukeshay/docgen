@@ -50,6 +50,18 @@ var (
 	fileNameOrderRegExp = regexp.MustCompile("/(\\d+)-")
 )
 
+const sitemapUrl = `
+  <url>
+    <loc>%s%s</loc>
+    <lastmod>%s</lastmod>
+  </url>`
+
+const sitemapStart = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
+
+const sitemapEnd = `
+</urlset>`
+
 func Build(c *cli.Context) error {
 	conf := cmds.GetConfigFromCliContext(c)
 
@@ -59,7 +71,25 @@ func Build(c *cli.Context) error {
 	spin.Suffix = " Building docs..."
 	spin.Start()
 
-	_, _, err := BuildAllFiles(c)
+	_, navSections, err := BuildAllFiles(c)
+
+	sitemap := sitemapStart
+
+	for _, section := range *navSections {
+		for _, page := range section.Pages {
+			sitemap += fmt.Sprintf(sitemapUrl, conf.Url, page.Href, time.Now().Format("2006-01-02"))
+		}
+	}
+
+	sitemap += sitemapEnd
+
+	sitemapPath := filepath.Join(conf.Build.Output, "sitemap.xml")
+
+	if err := os.WriteFile(sitemapPath, []byte(sitemap), 0755); err != nil {
+		fmt.Printf("Error writing sitemap: %s\n", err.Error())
+
+		return err
+	}
 
 	spin.Stop()
 
