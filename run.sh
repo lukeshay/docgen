@@ -18,9 +18,9 @@ TAR_FILE="$(echo -n "${FILE_BASENAME}_${OS}_${ARCH}.tar.gz" | tr '[:upper:]' '[:
 (
 	cd "$TMP_DIR"
 	echo "Downloading gocden $RELEASES_URL/download/$VERSION/$TAR_FILE..."
-	curl -vsfLO "$RELEASES_URL/download/$VERSION/$TAR_FILE"
+	curl -sfLO "$RELEASES_URL/download/$VERSION/$TAR_FILE"
 	echo "Downloading checksums..."
-	curl -vsfLO "$RELEASES_URL/download/$VERSION/checksums.txt"
+	curl -sfLO "$RELEASES_URL/download/$VERSION/checksums.txt"
 	echo "Verifying checksums..."
 	sha256sum --ignore-missing --quiet --check checksums.txt
 	if command -v cosign >/dev/null 2>&1; then
