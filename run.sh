@@ -17,7 +17,7 @@ TAR_FILE="$(echo -n "${FILE_BASENAME}_${OS}_${ARCH}.tar.gz" | tr '[:upper:]' '[:
 
 (
 	cd "$TMP_DIR"
-	echo "Downloading gocden $VERSION..."
+	echo "Downloading gocden $RELEASES_URL/download/$VERSION/$TAR_FILE..."
 	curl -vsfLO "$RELEASES_URL/download/$VERSION/$TAR_FILE"
 	echo "Downloading checksums..."
 	curl -vsfLO "$RELEASES_URL/download/$VERSION/checksums.txt"
