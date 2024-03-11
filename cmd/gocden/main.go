@@ -91,7 +91,7 @@ func main() {
 				Name:        "version",
 				Description: "Prints the version",
 				Action: func(cli *cli.Context) error {
-					fmt.Printf("gocden.%s\n", version)
+					fmt.Printf("gocden.v%s\n", version)
 					return nil
 				},
 			},
