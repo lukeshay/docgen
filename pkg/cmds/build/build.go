@@ -191,7 +191,12 @@ func BuildFile(files []DocFile, conf *config.Config, navSections []*assets.NavSe
 
 	if idx == 0 {
 		prev = file
-		next = files[idx+1]
+
+		if len(files) > 1 {
+			next = files[idx+1]
+		} else {
+			next = file
+		}
 	} else if idx == len(files)-1 {
 		prev = files[idx-1]
 		next = file
